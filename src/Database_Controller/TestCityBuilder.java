@@ -1,6 +1,7 @@
 package Database_Controller;
 
 import java.util.ArrayList;
+import FileReadWrite.*;
 
 import City_Parts.Structure;
 
@@ -8,13 +9,15 @@ public class TestCityBuilder {
 
     public static void main(String [] args){
         
-        CRUD crud = new CRUD();
+    	IFile csFileReaderWriter = new CSFile();
+    	csFileReaderWriter.get("C:\\Users\\user1\\Documents\\NetBeansProjects\\Smart-City-Simulator\\src\\Resources\\Map.txt");
+        CRUD crud = new CRUD(csFileReaderWriter);
     	String[][] cityArray = new String[0][0];
     	cityArray = crud.readFile();
 
-        CityBuilder oldStyleCity = new OldCityBuilder();
+        CityBuilder smartStyleCity = new SmartCityBuilder();
 
-        CityDirector cityDirector = new CityDirector(oldStyleCity);
+        CityDirector cityDirector = new CityDirector(smartStyleCity);
 
         cityDirector.makeCity(cityArray);
 

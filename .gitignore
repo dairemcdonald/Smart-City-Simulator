@@ -3,3 +3,6 @@
 /bin/
 .project
 .classpath
+*.class
+/Smart-City-Simulator/nbproject/private/
+/Smart-City-Simulator/build/

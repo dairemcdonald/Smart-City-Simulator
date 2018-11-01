@@ -1,5 +1,6 @@
 package Main_Controller;
 import Database_Controller.*;
+import FileReadWrite.*;
 
 import java.util.ArrayList;
 
@@ -8,69 +9,45 @@ public class Controller {
 	
 	public static void main(String [] args)
 	{
-		
-		 CRUD crud = new CRUD();
+		IFile fileReaderWriter = new CSFile();
+		fileReaderWriter.get("C:\\Users\\user1\\Documents\\NetBeansProjects\\Smart-City-Simulator\\src\\Resources\\Map.txt");
+		 CRUD crud = new CRUD(fileReaderWriter);
     	String[][] cityArray = new String[0][0];
     	cityArray = crud.readFile();
 
-        CityBuilder oldStyleCity = new OldCityBuilder();
+        CityBuilder smartStyleCity = new SmartCityBuilder();
 
-        CityDirector cityDirector = new CityDirector(oldStyleCity);
+        CityDirector cityDirector = new CityDirector(smartStyleCity);
 
         cityDirector.makeCity(cityArray);
 
-        City firstCity = cityDirector.getCity();
+        City smartCity = cityDirector.getCity();
+        
+        Commander c1 = new Commander();
         
         
         ArrayList<ArrayList<Structure>> structures = new ArrayList<ArrayList<Structure>>();
-        structures = firstCity.getStructures();
+        structures = smartCity.getStructures();
         
         
-
-		for(int i = 0; i < structures.size(); i++)
-		{
-			for(int j = 0; j < structures.get(i).size(); j++)
-			{
-				if(structures.get(i).get(j) != null)
-					System.out.print(structures.get(i).get(j).getSymbol() + " ");
-				else {
-					System.out.print("  ");
-				}
-			}
-			System.out.println();
-		}
-
-		int totalPop = 0;
-		float totalEnergyConsumptionPerDay = 0.0f;
-		float totalHeatCost = 0.0f;
-		float totalEnergyCost = 0.0f;
-		float totalEnergyCostPerDay = 0f;
-
-		for(int i = 0; i < structures.size(); i++)
-		{
-			for(int j = 0; j < structures.get(i).size(); j++)
-			{
-
-				if(structures.get(i).get(j) instanceof Building)
-				{
-					if(structures.get(i).get(j) instanceof House || structures.get(i).get(j) instanceof Apartment)
-					{
-						totalPop += structures.get(i).get(j).getResidents();
-					}
-					totalHeatCost += structures.get(i).get(j).getHeatingCostPerDay();
-					totalEnergyCost += structures.get(i).get(j).getEnergyCostPerDay();
-					totalEnergyCostPerDay += structures.get(i).get(j).getTotalCost();
-				}
-			}
-		}
-
-		System.out.println("\nTotal population: " + totalPop);
-		System.out.println("Total cost of energy per day: " + totalEnergyCost);
-		System.out.println("Total cost of heat per day: " + totalHeatCost);
-		System.out.println("Total Cost per day: " + totalEnergyCostPerDay);
-		int costPerYear = (int)totalEnergyCostPerDay * 365;
-		System.out.println("Total Cost per year: " + costPerYear);
-
+		CityDetails cityDetails = new CityDetails();
+		
+		Calculate_Resources calculateResources = new Calculate_Resources(structures, cityDetails);
+		Calculate_ResourcesPrintCityCommand cRPCC1 = new Calculate_ResourcesPrintCityCommand(calculateResources);
+		Calculate_ResourcesCommand cRC1 = new Calculate_ResourcesCommand(calculateResources);
+		
+		c1.setCommand(cRPCC1);
+		c1.doCommand();
+		c1.setCommand(cRC1);
+		c1.doCommand();
+		
+		cityDetails = calculateResources.getCityDetails();
+		
+		ShowDetails sD1 = new ShowDetails(cityDetails);
+		ShowDetailsCommand sDC1 = new ShowDetailsCommand(sD1);
+		
+		c1.setCommand(sDC1);
+		c1.doCommand();
 
 	}
 }
